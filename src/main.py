@@ -1,23 +1,20 @@
-from webview import Window, create_window, start
+from utils.appdata import AppData
+from utils.updater import Updater
+from utils.webhost import host
 
-from api import API
+from windows.launcher import Launcher
+from webview import start
+
+def main():
+  appData: AppData = AppData()
+  updater: Updater = Updater(appData)
+  
+  launcher_path: str = appData.v_path("launcher")
+  port, _ = host(launcher_path)
+
+  Launcher(f"http://localhost:{port}/", appData, updater)
+  start()
 
 if __name__ == '__main__':
-  frontend_path = "http://localhost:3000"
-  api: API = API()
-
-  window: Window = create_window(
-    title='GraphScript',
-    url=frontend_path,
-    js_api=api,
-    width=1200,
-    height=800,
-    transparent=True,
-    frameless=True,
-    vibrancy=True,
-    easy_drag=False,
-  )
-  
-  api.attach_window(window)
-  start(debug=True)
+  main()
 

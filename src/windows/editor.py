@@ -1,23 +1,19 @@
 from typing import Self
-from webview import Window, SAVE_DIALOG, OPEN_DIALOG
+from windows.base import Base
+from webview import (
+  SAVE_DIALOG,
+  OPEN_DIALOG,
+)
 
-class API:
-  window: Window | None
+class Editor(Base):
+  project_id: str
 
-  def __init__(self: Self):
-    self.window = None
-
-  def attach_window(self: Self, window: Window):
-    self.window = window
-
-  def close(self: Self):
-    if self.window is None: return
-    self.window.destroy()
-    exit(0)
-
-  def toggle_fullscreen(self: Self):
-    if self.window is None: return
-    self.window.toggle_fullscreen()
+  def __init__(self: Self, url: str, project_id: str):
+    self.project_id = project_id
+    super().__init__(
+      url=url,
+      title='GraphScript',
+    )
 
   def save_file(
     self: Self,
@@ -27,7 +23,6 @@ class API:
       "All files (*.*)",
     ],
   ) -> bool:
-    if self.window is None: return False
     path = self.window.create_file_dialog(
       SAVE_DIALOG,
       save_filename=save_name,
@@ -48,7 +43,6 @@ class API:
       "All files (*.*)",
     ],
   ) -> str | None:
-    if self.window is None: return None
     path = self.window.create_file_dialog(
       OPEN_DIALOG,
       file_types=file_types,
@@ -63,4 +57,7 @@ class API:
       content = file.read()
     
     return content
+  
+  def load_project_id(self: Self) -> str | None:
+    return self.project_id
 
