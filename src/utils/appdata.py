@@ -1,6 +1,6 @@
 from typing import Self
 from os.path import exists
-from os import mkdir
+from os import mkdir, makedirs
 
 cached_data: dict[str, str] = {}
 
@@ -12,6 +12,10 @@ def read(filepath: str) -> str | None:
     return file.read()
 
 def write(filepath: str, content: str) -> bool:
+  folder_path: str = "/".join(filepath.split('/')[:-1])
+  if not exists(folder_path):
+    makedirs(folder_path, exist_ok=True)
+  
   with open(filepath, 'w') as file:
     file.write(content)
   

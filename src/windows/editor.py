@@ -1,4 +1,7 @@
 from typing import Self
+
+from utils.appdata import AppData
+
 from windows.base import Base
 from webview import (
   SAVE_DIALOG,
@@ -7,9 +10,17 @@ from webview import (
 
 class Editor(Base):
   project_id: str
+  app_data: AppData
 
-  def __init__(self: Self, url: str, project_id: str):
+  def __init__(
+    self: Self,
+    url: str,
+    project_id: str,
+    app_data: AppData,
+  ):
     self.project_id = project_id
+    self.app_data = app_data
+
     super().__init__(
       url=url,
       title='GraphScript',
@@ -60,4 +71,18 @@ class Editor(Base):
   
   def load_project_id(self: Self) -> str | None:
     return self.project_id
+  
+  def backup_project(
+    self: Self,
+    content: str,
+  ) -> bool:
+    path: str = f"projects/pr_{self.project_id}/lastload.json"
+    self.app_data.store_data(path, content)
+    return True
+  
+  def restore_project(
+    self: Self,
+  ) -> str | None:
+    path: str = f"projects/pr_{self.project_id}/lastload.json"
+    return self.app_data.fetch_data(path)
 

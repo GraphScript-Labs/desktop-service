@@ -6,13 +6,13 @@ from windows.launcher import Launcher
 from webview import start
 
 def main():
-  appData: AppData = AppData()
-  updater: Updater = Updater(appData)
+  app_data: AppData = AppData()
+  updater: Updater = Updater(app_data)
   
-  launcher_path: str = appData.v_path("launcher")
+  launcher_path: str = app_data.v_path("launcher")
   port, _ = host(launcher_path)
 
-  Launcher(f"http://localhost:{port}/", appData, updater)
+  Launcher(f"http://localhost:{port}/", app_data, updater)
   start()
 
 if __name__ == '__main__':

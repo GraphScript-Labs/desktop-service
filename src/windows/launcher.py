@@ -10,16 +10,16 @@ from windows.editor import Editor
 from webview import windows
 
 class Launcher(Base):
-  appData: AppData
+  app_data: AppData
   updater: Updater
 
   def __init__(
     self: Self,
     url: str,
-    appData: AppData,
+    app_data: AppData,
     updater: Updater
   ) -> None:
-    self.appData = appData
+    self.app_data = app_data
     self.updater = updater
 
     super().__init__(
@@ -31,19 +31,23 @@ class Launcher(Base):
   
   def get_data(self: Self) -> str:
     default_template: str = '{"projects": []}'
-    return self.appData.fetch_data("launcher.json") or default_template
+    return self.app_data.fetch_data("launcher.json") or default_template
   
   def store_data(self: Self, data: str) -> bool:
-    return self.appData.store_data("launcher.json", data)
+    return self.app_data.store_data("launcher.json", data)
 
   def open_project(self: Self, project_id: str) -> None:
-    editor_path: str = self.appData.v_path("editor")
+    editor_path: str = self.app_data.v_path("editor")
     port, _ = host(editor_path)
 
-    Editor(f"http://localhost:{port}/", project_id)
+    Editor(
+      f"http://localhost:{port}/",
+      project_id,
+      self.app_data,
+    )
 
   def get_version(self: Self) -> str:
-    return self.appData.versions["launcher"]
+    return self.app_data.versions["launcher"]
 
   def check_updates(self: Self) -> bool:
     repos = ["launcher", "editor"]
