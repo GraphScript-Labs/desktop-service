@@ -16,7 +16,7 @@ jobs:
 
       - name: Clean up non source files
         run: |
-          find . -mindepth 1 -maxdepth 1 ! -name 'src' ! -name 'setup_hook.py' ! -name '.git' -exec rm -rf {} +
+          find . -mindepth 1 -maxdepth 1 ! -name 'src' ! -name 'assets' ! -name 'setup_hook.py' ! -name '.git' -exec rm -rf {} +
 
       - name: Version File
         run: |
