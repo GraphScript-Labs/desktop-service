@@ -50,11 +50,13 @@ class AppData:
   service_url: str
   org_url: str
   versions: dict[str, str] = {}
+  repos: list[str] = []
 
   def __init__(self: Self) -> None:
     datapath: str | None = read_config("datapath")
     service_url: str | None = read_config("service_url")
     org_url: str | None = read_config("org_url")
+    repos: str | None = read_config("repos")
 
     if not datapath:
       raise ConfigError("Datapath")
@@ -64,10 +66,14 @@ class AppData:
     
     if not org_url:
       raise ConfigError("Organization URL")
+    
+    if not repos:
+      raise ConfigError("Repositories")
 
     self.datapath = datapath
     self.service_url = service_url
     self.org_url = org_url
+    self.repos = repos.split("\n")
 
     self.setup_app_data_dir()
     versions_raw: str = read(f"{datapath}/versions.txt") or ""

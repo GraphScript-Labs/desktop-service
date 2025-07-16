@@ -50,11 +50,11 @@ class Launcher(Base):
     return self.app_data.versions["launcher"]
 
   def check_updates(self: Self) -> bool:
-    repos = ["launcher", "editor"]
+    repos = self.app_data.repos
     return any(map(self.updater.check_updates, repos))
   
   def update(self: Self) -> None:
-    repos = ["launcher", "editor"]
+    repos = self.app_data.repos
     for repo in repos:
       self.updater.update(repo)
 
