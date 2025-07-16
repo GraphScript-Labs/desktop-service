@@ -1,14 +1,19 @@
 from typing import Self
-from os.path import exists
+
 from os import mkdir, makedirs
+from os.path import exists, dirname, realpath, join
+
+from sys import argv
 
 cached_data: dict[str, str] = {}
+APP_DIR: str = dirname(realpath(argv[0]))
 
 def read(filepath: str) -> str | None:
   if not exists(filepath):
     return None
   
-  with open(filepath, 'r') as file:
+  full_path: str = join(APP_DIR, filepath)
+  with open(full_path, 'r') as file:
     return file.read()
 
 def write(filepath: str, content: str) -> bool:
@@ -16,7 +21,8 @@ def write(filepath: str, content: str) -> bool:
   if not exists(folder_path):
     makedirs(folder_path, exist_ok=True)
   
-  with open(filepath, 'w') as file:
+  full_path: str = join(APP_DIR, filepath)
+  with open(full_path, 'w') as file:
     file.write(content)
   
   return True
