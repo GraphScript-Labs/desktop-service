@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Any
 
 from os import mkdir, rename, remove, rmdir
 from os.path import exists
@@ -6,7 +6,7 @@ from os.path import exists
 from urllib.request import urlopen, urlretrieve
 from zipfile import ZipFile
 
-from utils.appdata import AppData
+from utils.appdata import AppData, read
 
 def fetch_url(url: str) -> str | None:
   with urlopen(url) as response:
@@ -74,14 +74,17 @@ class Updater:
         f"{local_path}/v{latest_version}"
       )
 
-      self.appData.update_version(repo, f"v{latest_version}")
-
       remove(f"{temp_path}/{latest_version}.zip")
       rmdir(temp_path)
 
-    if exists(f"{local_path}/v{latest_version}/pwv.js"):
-      with open(f"{local_path}/v{latest_version}/pwv.js", 'w') as f:
-        f.write(f"window.hasPWV = true;\n")
+    release_path: str = f"{local_path}/v{latest_version}"
+    if exists(f"{release_path}/setup_hook.py"):
+      hook_code: str = read(f"{release_path}/setup_hook.py") or ""
+      namespace: dict[str, Any] = {}
+      
+      exec(hook_code, namespace)
+      namespace["run_hook"](release_path)
 
+    self.appData.update_version(repo, f"v{latest_version}")
     return True
 
