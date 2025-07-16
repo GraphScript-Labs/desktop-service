@@ -46,8 +46,8 @@ class Launcher(Base):
       self.app_data,
     )
 
-  def get_version(self: Self) -> str:
-    return self.app_data.versions["launcher"]
+  def get_version(self: Self) -> dict[str, str]:
+    return self.app_data.versions
 
   def check_updates(self: Self) -> bool:
     repos = self.app_data.repos
