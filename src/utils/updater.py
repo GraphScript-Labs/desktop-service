@@ -83,7 +83,7 @@ class Updater:
       namespace: dict[str, Any] = {}
       
       exec(hook_code, namespace)
-      namespace["run_hook"](release_path)
+      namespace["run_hook"](release_path, datapath)
 
     self.appData.update_version(repo, f"v{latest_version}")
     return True
