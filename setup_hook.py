@@ -16,6 +16,7 @@ def run_hook(release_path: str, data_path: str) -> None:
       "launcher",
       "editor",
       "desktop-service",
+      "runtimes",
     ])
   }
 
