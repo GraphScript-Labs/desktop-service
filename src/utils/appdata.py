@@ -10,7 +10,7 @@ APP_DIR: str = dirname(realpath(argv[0])).rstrip('/src')
 
 def read(filepath: str) -> str | None:
   filepath = join(APP_DIR, filepath)
-  
+
   if not exists(filepath):
     return None
   
@@ -33,7 +33,7 @@ def read_config(
   config: str,
   cached_return: bool = True
 ) -> str | None:
-  config_path: str = f"../configs/{config}.txt"
+  config_path: str = f"configs/{config}.txt"
   if cached_return and config_path in cached_data:
     return cached_data[config_path]
   
