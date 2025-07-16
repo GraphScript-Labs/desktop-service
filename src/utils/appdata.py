@@ -9,20 +9,21 @@ cached_data: dict[str, str] = {}
 APP_DIR: str = dirname(realpath(argv[0]))
 
 def read(filepath: str) -> str | None:
+  filepath = join(APP_DIR, filepath)
   if not exists(filepath):
     return None
   
-  full_path: str = join(APP_DIR, filepath)
-  with open(full_path, 'r') as file:
+  with open(filepath, 'r') as file:
     return file.read()
 
 def write(filepath: str, content: str) -> bool:
+  filepath = join(APP_DIR, filepath)
   folder_path: str = "/".join(filepath.split('/')[:-1])
+  
   if not exists(folder_path):
     makedirs(folder_path, exist_ok=True)
   
-  full_path: str = join(APP_DIR, filepath)
-  with open(full_path, 'w') as file:
+  with open(filepath, 'w') as file:
     file.write(content)
   
   return True
@@ -31,7 +32,7 @@ def read_config(
   config: str,
   cached_return: bool = True
 ) -> str | None:
-  config_path: str = f"configs/{config}.txt"
+  config_path: str = f"../configs/{config}.txt"
   if cached_return and config_path in cached_data:
     return cached_data[config_path]
   
