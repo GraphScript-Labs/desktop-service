@@ -7,7 +7,7 @@ def write(filepath: str, content: str) -> bool:
   return True
 
 def run_hook(release_path: str, data_path: str) -> None:
-  mkdir(f"{release_path}/config")
+  mkdir(f"{release_path}/configs")
   configs: dict[str, str] = {
     "datapath": data_path,
     "service_url": "https://raw.githubusercontent.com/GraphScript-Labs",

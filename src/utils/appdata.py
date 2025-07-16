@@ -6,10 +6,11 @@ from os.path import exists, dirname, realpath, join
 from sys import argv
 
 cached_data: dict[str, str] = {}
-APP_DIR: str = dirname(realpath(argv[0]))
+APP_DIR: str = dirname(realpath(argv[0])).rstrip('/src')
 
 def read(filepath: str) -> str | None:
   filepath = join(APP_DIR, filepath)
+  
   if not exists(filepath):
     return None
   
