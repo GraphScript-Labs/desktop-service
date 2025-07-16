@@ -22,7 +22,7 @@ def run_hook(release_path: str, data_path: str) -> None:
 
   for config in configs:
     write(
-      f"{release_path}/config/{config}.txt",
+      f"{release_path}/configs/{config}.txt",
       configs[config]
     )
 
