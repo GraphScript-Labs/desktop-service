@@ -1,12 +1,16 @@
 from typing import Self, Any
 
-from os import mkdir, rename, remove, rmdir
+from shutil import copytree, rmtree
+from os import mkdir, rename, remove, rmdir, chmod
 from os.path import exists
+
+from datetime import datetime
+from plistlib import dumps
 
 from urllib.request import urlopen, urlretrieve
 from zipfile import ZipFile
 
-from utils.appdata import AppData, read
+from utils.appdata import AppData, read, write
 
 def fetch_url(url: str) -> str | None:
   with urlopen(url) as response:
@@ -87,4 +91,75 @@ class Updater:
 
     self.appData.update_version(repo, f"v{latest_version}")
     return True
+  
+  def build_mac(self: Self):
+    version: str = self.appData.versions.get("desktop-service", "0")
+    runtime_path: str = self.appData.v_path("runtimes")
+    d_service_path: str = self.appData.v_path("desktop-service")
+
+    timestamp: float = float(version.strip("v"))
+    tdt: datetime = datetime.fromtimestamp(timestamp)
+    version: str = tdt.strftime("%Y.%m.%d.%H%M%S")
+    short_version: str = tdt.strftime("%Y.%m.%d")
+
+    datapath: str = self.appData.datapath
+    build_path: str = f"{datapath}/build"
+    assets_path: str = f"{d_service_path}/assets"
+
+    runtime_name: str = "py313-mac"
+    runtime_path = f"{runtime_path}/{runtime_name}"
+
+    if exists(build_path):
+      rmtree(build_path)
+    
+    if exists(f"{datapath}/GraphScript.app"):
+      rmtree(f"{datapath}/GraphScript.app")
+
+    mkdir(build_path)
+
+    copytree(d_service_path, f"{build_path}/desktop-service")
+    copytree(runtime_path, f"{build_path}/runtime")
+    copytree(assets_path, f"{build_path}/Resources")
+
+    info: dict[str, Any] = {
+      "CFBundleName": "GraphScript",
+      "CFBundleDisplayName": "GraphScript",
+      "CFBundleIdentifier": "dev.graphscript.dservice",
+      "CFBundleVersion": version,
+      "CFBundleShortVersionString": short_version,
+      "CFBundlePackageType": "APPL",
+      "CFBundleIconFile": "GraphScript.icns",
+      "CFBundleExecutable": "launcher",
+      "CFBundleURLTypes": [
+        {
+          "CFBundleURLName": "GraphScript URL",
+          "CFBundleURLSchemes": ["graphscript"]
+        }
+      ]
+    }
+
+    write(
+      f"{build_path}/Info.plist",
+      dumps(info).decode('utf-8')
+    )
+
+    launcher_code: list[str] = [
+      "#!/bin/bash",
+      'DIR="$(cd "$(dirname "$0")" && pwd)"',
+      'source "$DIR/../runtime/bin/activate"',
+      'python3 "$DIR/../desktop-service/src/main.py"',
+    ]
+
+    write(
+      f"{build_path}/MacOS/launcher",
+      "\n".join(launcher_code)
+    )
+
+    write(f"{build_path}/PkgInfo", "APPL????")
+
+    chmod(f"{build_path}/MacOS/launcher", 0o755)
+    chmod(f"{build_path}/runtime/bin/python3", 0o755)
+
+    mkdir(f"{datapath}/GraphScript.app")
+    rename(build_path, f"{datapath}/GraphScript.app/Contents")
 

@@ -54,9 +54,16 @@ class Launcher(Base):
     return any(map(self.updater.check_updates, repos))
   
   def update(self: Self) -> None:
+    updater: Updater = self.updater
+
     repos = self.app_data.repos
+    should_build: bool = updater.check_updates("desktop-service")
+
     for repo in repos:
-      self.updater.update(repo)
+      updater.update(repo)
+    
+    if should_build:
+      updater.build_mac()
 
     for window in windows:
       window.destroy()
