@@ -1,8 +1,9 @@
 from typing import Self, Any
 
-from shutil import copytree, rmtree
-from os import mkdir, rename, remove, rmdir, chmod
+from shutil import copytree, rmtree, move
+from os import mkdir, rename, remove, chmod
 from os.path import exists
+from subprocess import run
 
 from datetime import datetime
 from plistlib import dumps
@@ -62,9 +63,13 @@ class Updater:
     datapath: str = self.appData.datapath
     local_path: str = f"{datapath}/{repo}/"
     temp_path: str = f"{datapath}/temp/{repo}"
+    release_path: str = f"{local_path}/v{latest_version}"
 
     if not exists(temp_path):
       mkdir(temp_path)
+
+    if exists(release_path):
+      rmtree(release_path)
     
     update_zip = urlretrieve(
       full_url,
@@ -75,13 +80,12 @@ class Updater:
       zip_ref.extractall(local_path)
       rename(
         f"{local_path}/{repo}-{branch}",
-        f"{local_path}/v{latest_version}"
+        release_path
       )
 
       remove(f"{temp_path}/{latest_version}.zip")
-      rmdir(temp_path)
+      rmtree(temp_path)
 
-    release_path: str = f"{local_path}/v{latest_version}"
     if exists(f"{release_path}/setup_hook.py"):
       hook_code: str = read(f"{release_path}/setup_hook.py") or ""
       namespace: dict[str, Any] = {}
@@ -162,4 +166,23 @@ class Updater:
 
     mkdir(f"{datapath}/GraphScript.app")
     rename(build_path, f"{datapath}/GraphScript.app/Contents")
+
+    if exists("/Applications/GraphScript.app"):
+      try:
+        rmtree("/Applications/GraphScript.app")
+      except PermissionError:
+        run([
+          "sudo", "rm", "-rf", "/Applications/GraphScript.app"
+        ])
+    
+    try:
+      move(
+        f"{datapath}/GraphScript.app",
+        "/Applications/GraphScript.app"
+      )
+    except PermissionError:
+      run([
+        "sudo", "mv", f"{datapath}/GraphScript.app",
+        "/Applications/GraphScript.app"
+      ])
 
