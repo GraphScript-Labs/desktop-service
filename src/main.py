@@ -30,7 +30,7 @@ def main():
   start()
 
 if __name__ == '__main__':
-  if "setup" in argv:
+  if "--setup" in argv:
     install()
     exit(0)
   
