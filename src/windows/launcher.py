@@ -30,8 +30,7 @@ class Launcher(Base):
     )
   
   def get_data(self: Self) -> str:
-    default_template: str = '{"projects": []}'
-    return self.app_data.fetch_data("launcher.json") or default_template
+    return self.app_data.fetch_data("launcher.json") or ""
   
   def store_data(self: Self, data: str) -> bool:
     return self.app_data.store_data("launcher.json", data)
