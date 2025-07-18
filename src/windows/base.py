@@ -16,6 +16,7 @@ class Base:
     frameless: bool = True,
     fulldrag: bool = False,
     resizable: bool = True,
+    min_dims: tuple[int, int] = (200, 100),
   ) -> None:
     self.window = create_window(
       title=title,
@@ -23,6 +24,7 @@ class Base:
       js_api=self,
       width=dims[0],
       height=dims[1],
+      min_size=min_dims,
       transparent=acryllic,
       vibrancy=acryllic,
       frameless=frameless,
