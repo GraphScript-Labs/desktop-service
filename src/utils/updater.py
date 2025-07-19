@@ -1,17 +1,31 @@
 from typing import Self, Any
 
 from shutil import copytree, rmtree, move
+
 from os import mkdir, rename, remove, chmod
 from os.path import exists
-from subprocess import run
 
+from subprocess import run
 from datetime import datetime
 from plistlib import dumps
-
-from urllib.request import urlopen, urlretrieve
 from zipfile import ZipFile
 
 from utils.appdata import AppData, read, write
+
+from certifi import where as certifi_where
+from ssl import create_default_context
+
+from urllib.request import (
+  urlopen,
+  urlretrieve,
+  build_opener,
+  install_opener,
+  HTTPSHandler
+)
+
+context = create_default_context(cafile=certifi_where())
+opener = build_opener(HTTPSHandler(context=context))
+install_opener(opener)
 
 def fetch_url(url: str) -> str | None:
   with urlopen(url) as response:
