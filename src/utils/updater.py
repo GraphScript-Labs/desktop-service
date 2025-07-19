@@ -152,8 +152,7 @@ class Updater:
       """DIR="$(cd "$(dirname "$0")" && pwd)\"""",
       """RUNTIME_DIR="$DIR/../runtime\"""",
       """SOURCE_DIR="$DIR/../src\"""",
-      """LOG_FILE="$DIR/../../../log.txt\"""",
-      """$RUNTIME_DIR/bin/python3 "$SOURCE_DIR/main.py" > $LOG_FILE 2>&1""",
+      """$RUNTIME_DIR/bin/python3 "$SOURCE_DIR/main.py\"""",
     ]
 
     write(
