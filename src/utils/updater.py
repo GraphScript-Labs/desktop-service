@@ -148,10 +148,12 @@ class Updater:
     )
 
     launcher_code: list[str] = [
-      "#!/bin/bash",
-      'DIR="$(cd "$(dirname "$0")" && pwd)"',
-      'source "$DIR/../runtime/bin/activate"',
-      'python3 "$DIR/../desktop-service/src/main.py"',
+      """#!/bin/bash""",
+      """DIR="$(cd "$(dirname "$0")" && pwd)\"""",
+      """RUNTIME_DIR="$DIR/../runtime\"""",
+      """SOURCE_DIR="$DIR/../src\"""",
+      """LOG_FILE="$DIR/../../../log.txt\"""",
+      """$RUNTIME_DIR/bin/python3 "$SOURCE_DIR/main.py" > $LOG_FILE 2>&1""",
     ]
 
     write(
