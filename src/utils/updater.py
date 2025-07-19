@@ -151,7 +151,7 @@ class Updater:
       """#!/bin/bash""",
       """DIR="$(cd "$(dirname "$0")" && pwd)\"""",
       """RUNTIME_DIR="$DIR/../runtime\"""",
-      """SOURCE_DIR="$DIR/../desktop-service\"""",
+      """SOURCE_DIR="$DIR/../desktop-service/src\"""",
       """$RUNTIME_DIR/bin/python3 "$SOURCE_DIR/main.py\"""",
     ]
 
