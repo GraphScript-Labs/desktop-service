@@ -17,7 +17,7 @@ def install() -> None:
   app_data, updater = setup()
   
   for repo in app_data.repos:
-    updater.update(repo)
+    updater.update(repo, force=True)
   
   updater.build_mac()
 
