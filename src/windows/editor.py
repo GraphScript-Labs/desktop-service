@@ -1,8 +1,11 @@
 from typing import Self
 
 from utils.appdata import AppData
+from utils.webhost import host
 
 from windows.base import Base
+from windows.console import Console
+
 from webview import (
   SAVE_DIALOG,
   OPEN_DIALOG,
@@ -85,4 +88,19 @@ class Editor(Base):
   ) -> str | None:
     path: str = f"projects/pr_{self.project_id}/lastload.json"
     return self.app_data.fetch_data(path)
+  
+  def run_project(self: Self, script: str) -> None:
+    console_path: str = self.app_data.v_path("console")
+    script_path: str = f"projects/pr_{self.project_id}/console/entry.gsam"
+    port, _ = host(console_path)
+
+    self.app_data.store_data(
+      script_path,
+      script,
+    )
+
+    Console(
+      f"http://localhost:{port}/",
+      f"{self.app_data.datapath}/data/{script_path}",
+    )
 
