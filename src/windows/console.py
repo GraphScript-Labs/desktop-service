@@ -5,6 +5,8 @@ from utils.shellhost import ShellProcess
 
 from windows.base import Base
 
+from sys import executable
+
 class Console(Base):
   updater: Updater
   shell: ShellProcess
@@ -40,6 +42,8 @@ class Console(Base):
   def start_shell(self: Self) -> None:
     self.shell = ShellProcess(
       [
+        executable,
+        "-m",
         "gsam",
         self.filepath,
       ],
