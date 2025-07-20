@@ -2,10 +2,12 @@ from typing import Self
 
 from utils.updater import Updater
 from utils.shellhost import ShellProcess
+from utils.appdata import APP_DIR
 
 from windows.base import Base
 
 from sys import executable
+from os import environ
 
 class Console(Base):
   updater: Updater
@@ -40,13 +42,21 @@ class Console(Base):
     self.window.evaluate_js("window.emitFinished();")
 
   def start_shell(self: Self) -> None:
+    pythonpath: str = f"{APP_DIR}/../runtime/packages"
+    lines: list[str] = [
+      "import gsam.cli",
+      f"gsam.cli.run_file('{self.filepath}')",
+    ]
+
+    command: str = " ".join([
+      f'PYTHONPATH={pythonpath}',
+      f"{executable}",
+      f"-c",
+      f'"{"; ".join(lines)}"',
+    ])
+
     self.shell = ShellProcess(
-      [
-        executable,
-        "-m",
-        "gsam",
-        self.filepath,
-      ],
+      command,
       [self.add_console_output],
       [self.emit_finished]
     )

@@ -1,8 +1,7 @@
 from typing import IO, Self, Callable, TypeAlias
 
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 from threading import Thread
-from os import environ
 
 OutputCallback: TypeAlias = Callable[[str], None]
 FinishedCallback: TypeAlias = Callable[[], None]
@@ -14,7 +13,7 @@ class ShellProcess:
 
   def __init__(
     self: Self,
-    args: list[str],
+    args: list[str] | str,
     output_callbacks: list[OutputCallback],
     finished_callbacks: list[FinishedCallback] = [],
   ) -> None:
@@ -24,9 +23,9 @@ class ShellProcess:
       args,
       stdin=PIPE,
       stdout=PIPE,
-      stderr=STDOUT,
+      stderr=PIPE,
       universal_newlines=True,
-      env=environ.copy()
+      shell=True,
     )
 
     thread = Thread(
