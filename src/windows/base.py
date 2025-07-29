@@ -4,6 +4,8 @@ from webview import (
   Window,
 )
 
+from utils.logger import logger
+
 class Base:
   window: Window
 
@@ -18,6 +20,7 @@ class Base:
     resizable: bool = True,
     min_dims: tuple[int, int] = (200, 100),
   ) -> None:
+    logger.log(f'Creating window "{title}"')
     self.window = create_window(
       title=title,
       url=url,
@@ -33,9 +36,11 @@ class Base:
     )
 
   def close(self: Self) -> None:
+    logger.log(f'Closing window "{self.window.title}"')
     self.window.destroy()
     exit(0)
 
   def toggle_fullscreen(self: Self) -> None:
+    logger.log(f'Toggling fullscreen for window "{self.window.title}"')
     self.window.toggle_fullscreen()
 
