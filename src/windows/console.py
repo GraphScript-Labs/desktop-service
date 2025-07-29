@@ -7,7 +7,6 @@ from utils.appdata import APP_DIR
 from windows.base import Base
 
 from sys import executable
-from os import environ
 
 class Console(Base):
   updater: Updater
