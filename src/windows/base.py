@@ -43,4 +43,7 @@ class Base:
   def toggle_fullscreen(self: Self) -> None:
     logger.log(f'Toggling fullscreen for window "{self.window.title}"')
     self.window.toggle_fullscreen()
+  
+  def log(self: Self, message: str) -> None:
+    logger.log(f'Log from window "{self.window.title}": {message}')
 
