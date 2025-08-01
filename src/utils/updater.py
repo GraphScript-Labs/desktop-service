@@ -263,7 +263,7 @@ class Updater:
     Popen([
       "/bin/bash",
       "-c",
-      "sleep 2 && open /Applications/GraphScript.app"
+      "sleep 1 && open /Applications/GraphScript.app"
     ])
 
     logger.log(f"macOS application launched successfully")
