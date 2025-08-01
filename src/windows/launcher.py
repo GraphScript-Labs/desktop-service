@@ -55,6 +55,8 @@ class Launcher(Base):
       self.app_data,
     )
 
+    self.close()
+
   def get_version(self: Self) -> dict[str, str]:
     logger.log('Fetching version information')
     return self.app_data.versions
