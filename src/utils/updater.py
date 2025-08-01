@@ -260,4 +260,7 @@ class Updater:
       ])
 
     logger.log(f"macOS application build complete")
+    run([
+    "open", "/Applications/GraphScript.app",
+  ])
 
