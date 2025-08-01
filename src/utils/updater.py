@@ -5,7 +5,7 @@ from shutil import copytree, rmtree, move
 from os import mkdir, rename, remove, chmod
 from os.path import exists
 
-from subprocess import run
+from subprocess import run, Popen
 from datetime import datetime
 from plistlib import dumps
 from zipfile import ZipFile
@@ -260,7 +260,11 @@ class Updater:
       ])
 
     logger.log(f"macOS application build complete")
-    run([
-    "open", "/Applications/GraphScript.app",
-  ])
+    Popen([
+      "/bin/bash",
+      "-c",
+      "sleep 2 && open /Applications/GraphScript.app"
+    ])
+
+    logger.log(f"macOS application launched successfully")
 
