@@ -86,6 +86,7 @@ class ShellProcess:
       logger.log(f"Writing input to process stdin")
       self.process.stdin.write(input_data + "\n")
       self.process.stdin.flush()
+      self.on_flush(input_data)
 
   def terminate(self: Self) -> None:
     logger.log(f"Terminating shell process")
