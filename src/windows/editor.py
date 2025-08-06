@@ -1,7 +1,7 @@
 from typing import Self
 
 from utils.appdata import AppData
-from utils.webhost import host
+from utils.webhost import host, close_server
 from utils.logger import logger
 
 from windows.base import Base
@@ -15,21 +15,37 @@ from webview import (
 class Editor(Base):
   project_id: str
   app_data: AppData
+  port: int
 
   def __init__(
     self: Self,
-    url: str,
     project_id: str,
     app_data: AppData,
   ):
     logger.log(f'Initializing editor for project ID: {project_id}')
+    
     self.project_id = project_id
     self.app_data = app_data
+
+    editor_path: str = self.app_data.v_path("editor")
+    port, _ = host(editor_path)
+
+    self.port = port
+    url: str = f"http://localhost:{port}/"
+
+    logger.log(f'Hosting editor at port: {port}')
 
     super().__init__(
       url=url,
       title='GraphScript',
     )
+
+  def close(self: Self) -> None:
+    logger.log('Closing editor server')
+    close_server(self.port)
+
+    logger.log(f'Closing editor for project ID: {self.project_id}')
+    super().close()
 
   def save_file(
     self: Self,
@@ -106,19 +122,12 @@ class Editor(Base):
   def run_project(self: Self, script: str) -> None:
     logger.log(f'Running project with ID: {self.project_id}')
 
-    console_path: str = self.app_data.v_path("console")
     script_path: str = f"projects/pr_{self.project_id}/console/entry.gsam"
-    port, _ = host(console_path)
-
-    logger.log(f'Hosting console at port: {port}')
-    self.app_data.store_data(
-      script_path,
-      script,
-    )
+    self.app_data.store_data(script_path, script)
 
     logger.log(f'Launching console for script: {script_path}')
     Console(
-      f"http://localhost:{port}/",
       f"{self.app_data.datapath}/data/{script_path}",
+      self.app_data,
     )
 

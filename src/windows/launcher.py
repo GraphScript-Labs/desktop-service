@@ -2,7 +2,7 @@ from typing import Self
 
 from utils.appdata import AppData
 from utils.updater import Updater
-from utils.webhost import host
+from utils.webhost import host, close_server
 from utils.logger import logger
 
 from windows.base import Base
@@ -13,10 +13,10 @@ from webview import windows
 class Launcher(Base):
   app_data: AppData
   updater: Updater
+  port: int
 
   def __init__(
     self: Self,
-    url: str,
     app_data: AppData,
     updater: Updater
   ) -> None:
@@ -25,6 +25,14 @@ class Launcher(Base):
     self.app_data = app_data
     self.updater = updater
 
+    launcher_path: str = app_data.v_path("launcher")
+    port, _ = host(launcher_path)
+
+    self.port = port
+    url: str = f"http://localhost:{port}/"
+
+    logger.log(f"Hosting Launcher on port: {port}")
+
     super().__init__(
       url=url,
       title="GraphScript Launcher",
@@ -32,6 +40,13 @@ class Launcher(Base):
       resizable=False,
     )
   
+  def close(self: Self) -> None:
+    logger.log('Closing Launcher server')
+    close_server(self.port)
+
+    logger.log('Closing Launcher window')
+    super().close()
+
   def get_data(self: Self) -> str:
     logger.log('Fetching launcher data')
     return self.app_data.fetch_data("launcher.json") or ""
@@ -42,18 +57,7 @@ class Launcher(Base):
 
   def open_project(self: Self, project_id: str) -> None:
     logger.log(f'Opening project with ID: {project_id}')
-
-    editor_path: str = self.app_data.v_path("editor")
-    port, _ = host(editor_path)
-
-    logger.log(f'Hosting editor at port: {port}')
-    logger.log(f'Opening editor for project ID: {project_id}')
-
-    Editor(
-      f"http://localhost:{port}/",
-      project_id,
-      self.app_data,
-    )
+    Editor(project_id, self.app_data)
 
     self.close()
 

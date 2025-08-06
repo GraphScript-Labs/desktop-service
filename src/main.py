@@ -31,13 +31,9 @@ def install() -> None:
 
 def main():
   logger.log("Main function started")
-
   app_data, updater = setup()
-  launcher_path: str = app_data.v_path("launcher")
-  port, _ = host(launcher_path)
-
-  logger.log(f"Hosting Launcher on port: {port}")
-  Launcher(f"http://localhost:{port}/", app_data, updater)
+  
+  Launcher(app_data, updater)
   start()
 
 if __name__ == '__main__':

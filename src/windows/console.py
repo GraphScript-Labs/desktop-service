@@ -2,7 +2,8 @@ from typing import Self
 
 from utils.updater import Updater
 from utils.shellhost import ShellProcess
-from utils.appdata import APP_DIR
+from utils.appdata import AppData, APP_DIR
+from utils.webhost import host, close_server
 from utils.logger import logger
 
 from windows.base import Base
@@ -10,16 +11,29 @@ from windows.base import Base
 from sys import executable
 
 class Console(Base):
+  app_data: AppData
   updater: Updater
+  port: int
   shell: ShellProcess
   filepath: str
 
   def __init__(
     self: Self,
-    url: str,
     filepath: str,
+    app_data: AppData,
   ) -> None:
     logger.log(f'Initializing console for file: {filepath}')
+
+    self.app_data = app_data
+
+    console_path: str = app_data.v_path("console")
+    port, _ = host(console_path)
+
+    self.port = port
+    url: str = f"http://localhost:{port}/"
+
+    logger.log(f'Hosting console at port: {port}')
+
     super().__init__(
       url=url,
       title="GraphScript Launcher",
@@ -33,6 +47,10 @@ class Console(Base):
   def close(self: Self) -> None:
     logger.log(f'Closing console for file: {self.filepath}')
     if self.shell: self.shell.terminate()
+    
+    logger.log('Closing console server')
+    close_server(self.port)
+
     super().close()
   
   def add_console_output(self: Self, message: str) -> None:
