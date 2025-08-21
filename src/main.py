@@ -1,7 +1,7 @@
 from utils.logger import logger
 from utils.appdata import AppData
 from utils.updater import Updater
-from utils.webhost import host
+from utils.menubar import create_menu
 
 from windows.launcher import Launcher
 from webview import start
@@ -34,7 +34,7 @@ def main():
   app_data, updater = setup()
   
   Launcher(app_data, updater)
-  start()
+  start(menu=create_menu(app_data, updater))
 
 if __name__ == '__main__':
   logger.log("Starting GraphScript Desktop Environment")
